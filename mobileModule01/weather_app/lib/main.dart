@@ -1,38 +1,55 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const WeatherApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class WeatherApp extends StatelessWidget {
+  const WeatherApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      home: const HomeScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  //int _selectedIndex = 0;
+  String _searchText = "";
+  
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
 
-  void _incrementCounter() {
+  void _onTabSelected(int index) {
     setState(() {
+      //_selectedIndex = index;
+      _tabController.index = index;
+    });
+  }
+
+  void _updateText(String text) {
+    setState(() {
+      _searchText = text.isEmpty ? "" : " - $text";
+    });
+  }
+
+  void _useGeolocation() {
+    setState(() {
+      _searchText = " - Geolocation";
     });
   }
 
@@ -40,26 +57,37 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+        title: TextField(
+          decoration: InputDecoration(
+            hintText: 'Search...',
+            border: InputBorder.none,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.my_location),
+              onPressed: _useGeolocation,
             ),
+          ),
+          onChanged: _updateText,
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          Center(child: Text("Currently$_searchText", style: const TextStyle(fontSize: 24))),
+          Center(child: Text("Today$_searchText", style: const TextStyle(fontSize: 24))),
+          Center(child: Text("Weekly$_searchText", style: const TextStyle(fontSize: 24))),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: TabBar(
+          controller: _tabController,
+          onTap: _onTabSelected,
+          tabs: const [
+            Tab(icon: Icon(Icons.cloud), text: 'Currently'),
+            Tab(icon: Icon(Icons.today), text: 'Today'),
+            Tab(icon: Icon(Icons.calendar_view_week), text: 'Weekly'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
