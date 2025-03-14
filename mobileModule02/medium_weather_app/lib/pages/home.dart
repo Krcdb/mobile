@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/pages/default_page.dart';
+import 'package:medium_weather_app/pages/default_page.dart';
 
 
 class HomeScreen extends StatefulWidget {
