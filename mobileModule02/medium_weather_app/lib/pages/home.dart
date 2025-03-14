@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medium_weather_app/pages/default_page.dart';
+import 'package:medium_weather_app/utils/geolocation.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -33,7 +34,13 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
 
   void _useGeolocation() {
     setState(() {
-      _searchText = "Geolocation";
+      getCurrentLocation().then((position) {
+        if (position != null) {
+          getAddressFromCoordinates(position).then((address) {
+              _searchText = address;
+          });
+        }
+      });
     });
   }
 
