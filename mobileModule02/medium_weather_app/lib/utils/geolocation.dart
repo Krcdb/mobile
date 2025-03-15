@@ -1,15 +1,25 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger(
+  printer: PrettyPrinter(
+    methodCount: 0, // Hide method calls
+    dateTimeFormat: DateTimeFormat.dateAndTime,
+  ),
+);
 
 Future<bool> handleLocationPermission() async {
   LocationPermission permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
+      logger.e("Location permission denied");
       return false;
     }
   }
   if (permission == LocationPermission.deniedForever) {
+    logger.e("Location permission denied forever");
     return false;
   }
   return true;

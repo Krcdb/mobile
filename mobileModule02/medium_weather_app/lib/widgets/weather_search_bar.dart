@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
+import 'package:medium_weather_app/data/repository/geocoding_api.dart';
 
 class WeatherSearch extends StatefulWidget {
   const WeatherSearch({super.key});
@@ -11,28 +11,12 @@ class WeatherSearch extends StatefulWidget {
 
 class WeatherSearchState extends State<WeatherSearch> {
   final TextEditingController _controller = TextEditingController();
-  List<Map<String, dynamic>> _suggestions = [];
+  GeocodingResponse _suggestions = GeocodingResponse(results: []);
 
-  Future<void> fetchCitySuggestions(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _suggestions = [];
-      });
-      return;
-    }
-
-    final url =
-        'https://geocoding-api.open-meteo.com/v1/search?name=$query&count=5&language=en&format=json';
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data['results'] != null) {
-        setState(() {
-          _suggestions = List<Map<String, dynamic>>.from(data['results']);
-        });
-      }
-    }
+  Future<void> updateCitySuggestions(String query) async {
+    setState(() async {
+      _suggestions = await fetchCitySuggestions(query) ?? GeocodingResponse(results: []);
+    });
   }
 
   void fetchWeather(double lat, double lon) {
@@ -56,17 +40,17 @@ class WeatherSearchState extends State<WeatherSearch> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: _suggestions.length,
+            itemCount: _suggestions.results.length,
             itemBuilder: (context, index) {
-              final city = _suggestions[index];
+              final city = _suggestions.results[index];
               return ListTile(
-                title: Text('${city["name"]}, ${city["country"]}'),
-                subtitle: Text(city["admin1"] ?? ''),
+                title: Text('${city.name}, ${city.country}'),
+                subtitle: Text(city.admin1 ?? ''),
                 onTap: () {
-                  _controller.text = city["name"];
-                  fetchWeather(city["latitude"], city["longitude"]);
+                  _controller.text = city.name;
+                  fetchWeather(city.latitude, city.longitude);
                   setState(() {
-                    _suggestions = [];
+                    _suggestions = GeocodingResponse(results: []);
                   });
                 },
               );
