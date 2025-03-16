@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:medium_weather_app/pages/home.dart';
+import 'package:medium_weather_app/presentation/screens/home_screen.dart';
 
 class GeocodingResponse {
   final List<City> results;

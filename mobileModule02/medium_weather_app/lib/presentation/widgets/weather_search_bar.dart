@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:medium_weather_app/data/repository/geocoding_api.dart';
+import 'package:medium_weather_app/core/services/geocoding_api.dart';
 
 class WeatherSearch extends StatefulWidget {
-  const WeatherSearch({super.key});
+  final Function(City) onSearch;
+  final Function() onGeolocation;
+
+  const WeatherSearch({super.key, required this.onSearch, required this.onGeolocation});
 
   @override
   WeatherSearchState createState() => WeatherSearchState();
@@ -14,8 +17,9 @@ class WeatherSearchState extends State<WeatherSearch> {
   GeocodingResponse _suggestions = GeocodingResponse(results: []);
 
   Future<void> updateCitySuggestions(String query) async {
-    setState(() async {
-      _suggestions = await fetchCitySuggestions(query) ?? GeocodingResponse(results: []);
+    final suggestions = await fetchCitySuggestions(query);
+    setState(() {
+      _suggestions = suggestions ?? GeocodingResponse(results: []);
     });
   }
 
@@ -31,11 +35,17 @@ class WeatherSearchState extends State<WeatherSearch> {
         TextField(
           controller: _controller,
           decoration: InputDecoration(
-            hintText: 'Search city...',
-            suffixIcon: Icon(Icons.search),
+            hintText: 'Search...',
+            border: InputBorder.none,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.my_location),
+              onPressed: () {
+                widget.onGeolocation();
+              },
+            ),
           ),
           onChanged: (value) {
-            fetchCitySuggestions(value);
+            updateCitySuggestions(value);
           },
         ),
         Expanded(
@@ -47,8 +57,7 @@ class WeatherSearchState extends State<WeatherSearch> {
                 title: Text('${city.name}, ${city.country}'),
                 subtitle: Text(city.admin1 ?? ''),
                 onTap: () {
-                  _controller.text = city.name;
-                  fetchWeather(city.latitude, city.longitude);
+                  widget.onSearch(city);
                   setState(() {
                     _suggestions = GeocodingResponse(results: []);
                   });
