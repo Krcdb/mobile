@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:medium_weather_app/core/services/geocoding_api.dart';
+import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
 import 'package:medium_weather_app/presentation/screens/currently_screen.dart';
 import 'package:medium_weather_app/core/utils/geolocation.dart';
 import 'package:logger/logger.dart';
@@ -46,21 +46,18 @@ class HomeScreenState extends State<HomeScreen>
   }
 
   void _useGeolocation() async {
-    logger.i("Using geolocation");
-    final position = await getCurrentLocation(); // Get current location
-    logger.i("Got position: $position");
+    final position = await getCurrentLocation();
 
     if (position != null) {
       final address = await getAddressFromCoordinates(position);
-      logger.i("Got address: $address");
 
       final geocodingResponse = await fetchCitySuggestions(
         address,
-      ); // Fetch city suggestions
+      );
 
       if (geocodingResponse != null && geocodingResponse.results.isNotEmpty) {
         final firstCity =
-            geocodingResponse.results.first; // Pick the first city
+            geocodingResponse.results.first;
         logger.i("Selected city: ${firstCity.name}, ${firstCity.country}");
 
         setState(() {
@@ -76,16 +73,8 @@ class HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          decoration: InputDecoration(
-            hintText: 'Search...',
-            border: InputBorder.none,
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.my_location),
-              onPressed: _useGeolocation,
-            ),
-          ),
-        ),
+        //insert the weather search bar here
+        title: WeatherSearchBar(onCitySelected: _updateCity, onUseGeolocation: _useGeolocation),
       ),
       body: TabBarView(
         controller: _tabController,

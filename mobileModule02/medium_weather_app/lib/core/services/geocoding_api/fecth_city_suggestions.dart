@@ -1,14 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:medium_weather_app/presentation/screens/home_screen.dart';
-
 class GeocodingResponse {
   final List<City> results;
 
   GeocodingResponse({required this.results});
 
   factory GeocodingResponse.fromJson(Map<String, dynamic> json) {
+    if (json['results'] == null) return GeocodingResponse(results: []);
     return GeocodingResponse(
       results: (json['results'] as List).map((e) => City.fromJson(e)).toList(),
     );
@@ -76,13 +75,14 @@ Future<GeocodingResponse?> fetchCitySuggestions(String query) async {
 
   final url =
       'https://geocoding-api.open-meteo.com/v1/search?name=$query&count=5&language=en&format=json';
-  logger.i("Fetching city suggestions from: $url");
   final response = await http.get(Uri.parse(url));
-  logger.i("Got response: ${response.statusCode}");
 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
+    if (data == null) return null;
     return GeocodingResponse.fromJson(data);
   }
   return null;
 }
+
+

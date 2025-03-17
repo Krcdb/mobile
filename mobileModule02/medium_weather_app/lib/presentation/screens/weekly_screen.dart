@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:medium_weather_app/core/services/geocoding_api.dart';
+import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
 
 class WeeklyScreen extends StatefulWidget {
   final City? city;

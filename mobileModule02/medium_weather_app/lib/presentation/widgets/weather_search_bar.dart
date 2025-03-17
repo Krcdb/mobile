@@ -1,72 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
 
-import 'package:medium_weather_app/core/services/geocoding_api.dart';
+class WeatherSearchBar extends StatefulWidget {
+  final Function(City) onCitySelected;
+  final VoidCallback onUseGeolocation;
 
-class WeatherSearch extends StatefulWidget {
-  final Function(City) onSearch;
-  final Function() onGeolocation;
-
-  const WeatherSearch({super.key, required this.onSearch, required this.onGeolocation});
+  const WeatherSearchBar({
+    super.key,
+    required this.onCitySelected,
+    required this.onUseGeolocation,
+  });
 
   @override
-  WeatherSearchState createState() => WeatherSearchState();
+  WeatherSearchBarState createState() => WeatherSearchBarState();
 }
 
-class WeatherSearchState extends State<WeatherSearch> {
-  final TextEditingController _controller = TextEditingController();
-  GeocodingResponse _suggestions = GeocodingResponse(results: []);
+class WeatherSearchBarState extends State<WeatherSearchBar> {
+  final TextEditingController _searchController = TextEditingController();
+  List<City> _suggestions = [];
+  bool _isLoading = false;
+  OverlayEntry? _overlayEntry;
 
-  Future<void> updateCitySuggestions(String query) async {
-    final suggestions = await fetchCitySuggestions(query);
-    setState(() {
-      _suggestions = suggestions ?? GeocodingResponse(results: []);
-    });
+  final LayerLink _layerLink = LayerLink();
+
+  void _onSearchChanged(String query) async {
+    if (query.isEmpty) {
+      _removeOverlay();
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final geocodingResponse = await fetchCitySuggestions(query);
+
+    if (geocodingResponse != null) {
+      setState(() {
+        _suggestions = geocodingResponse.results;
+        _isLoading = false;
+      });
+
+      _showOverlay();
+    }
   }
 
-  void fetchWeather(double lat, double lon) {
-    // Implement API call to fetch weather using lat & lon
-    print("Fetching weather for lat: $lat, lon: $lon");
+  void _onCityTapped(City city) {
+    widget.onCitySelected(city);
+    _searchController.clear();
+    _removeOverlay();
+  }
+
+  void _showOverlay() {
+    _removeOverlay(); // Remove previous overlay if any
+
+    final overlay = Overlay.of(context);
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        width: MediaQuery.of(context).size.width * 0.9, // Adjust width
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          offset: const Offset(0, 40), // Position it below TextField
+          child: Material(
+            elevation: 4,
+            color: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _suggestions.map((city) {
+                return ListTile(
+                  title: Text("${city.name}, ${city.admin1}, ${city.country}"),
+                  onTap: () => _onCityTapped(city),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(_overlayEntry!);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _removeOverlay();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: _controller,
-          decoration: InputDecoration(
-            hintText: 'Search...',
-            border: InputBorder.none,
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.my_location),
-              onPressed: () {
-                widget.onGeolocation();
-              },
-            ),
-          ),
-          onChanged: (value) {
-            updateCitySuggestions(value);
-          },
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: TextField(
+        controller: _searchController,
+        onChanged: _onSearchChanged,
+        decoration: InputDecoration(
+          hintText: 'Search city...',
+          border: InputBorder.none,
+          suffixIcon: _isLoading
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : IconButton(
+                  icon: Icon(Icons.my_location),
+                  onPressed: widget.onUseGeolocation,
+                ),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _suggestions.results.length,
-            itemBuilder: (context, index) {
-              final city = _suggestions.results[index];
-              return ListTile(
-                title: Text('${city.name}, ${city.country}'),
-                subtitle: Text(city.admin1 ?? ''),
-                onTap: () {
-                  widget.onSearch(city);
-                  setState(() {
-                    _suggestions = GeocodingResponse(results: []);
-                  });
-                },
-              );
-            },
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
