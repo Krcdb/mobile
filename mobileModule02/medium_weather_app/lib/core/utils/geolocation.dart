@@ -19,21 +19,21 @@ Future<bool> handleLocationPermission(BuildContext context) async {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       logger.e("Location permission denied");
-      _showPermissionDialog(context);
+      _showGeolocationPermissionDialog(context);
       return false;
     }
   }
   
   if (permission == LocationPermission.deniedForever) {
     logger.e("Location permission denied forever");
-    _showPermissionDialog(context, permanentlyDenied: true);
+    _showGeolocationPermissionDialog(context, permanentlyDenied: true);
     return false;
   }
   
   return true;
 }
 
-void _showPermissionDialog(BuildContext context, {bool permanentlyDenied = false}) {
+void _showGeolocationPermissionDialog(BuildContext context, {bool permanentlyDenied = false}) {
   if (context.mounted == false) return;
   
   showDialog(

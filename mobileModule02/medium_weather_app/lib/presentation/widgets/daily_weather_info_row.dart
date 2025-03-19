@@ -32,7 +32,7 @@ class DailyWeatherInfoRow extends StatelessWidget {
         ),
         Expanded(
           child: Text(
-            '$minTemperature$minTempUnit - $maxTemperature$maxTempUnit',
+            '$minTemperature$minTempUnit | $maxTemperature$maxTempUnit',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16),
           ),
