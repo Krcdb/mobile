@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter/material.dart';
 
 final logger = Logger(
   printer: PrettyPrinter(
@@ -9,24 +12,56 @@ final logger = Logger(
   ),
 );
 
-Future<bool> handleLocationPermission() async {
+Future<bool> handleLocationPermission(BuildContext context) async {
   LocationPermission permission = await Geolocator.checkPermission();
+  
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       logger.e("Location permission denied");
+      _showPermissionDialog(context);
       return false;
     }
   }
+  
   if (permission == LocationPermission.deniedForever) {
     logger.e("Location permission denied forever");
+    _showPermissionDialog(context, permanentlyDenied: true);
     return false;
   }
+  
   return true;
 }
 
-Future<Position?> getCurrentLocation() async {
-  bool hasPermission = await handleLocationPermission();
+void _showPermissionDialog(BuildContext context, {bool permanentlyDenied = false}) {
+  if (context.mounted == false) return;
+  
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Location Permission"),
+        content: Text(permanentlyDenied
+            ? "Location permission is permanently denied. Please enable it from settings."
+            : "Location permission is required to use this feature."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (permanentlyDenied) {
+                Geolocator.openAppSettings();
+              }
+            },
+            child: Text(permanentlyDenied ? "Open Settings" : "OK"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<Position?> getCurrentLocation(BuildContext context) async {
+  bool hasPermission = await handleLocationPermission(context);
   if (!hasPermission) return null;
 
   return await Geolocator.getCurrentPosition(

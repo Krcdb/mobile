@@ -46,7 +46,7 @@ class HomeScreenState extends State<HomeScreen>
   }
 
   void _useGeolocation() async {
-    final position = await getCurrentLocation();
+    final position = await getCurrentLocation(context);
 
     if (position != null) {
       final address = await getAddressFromCoordinates(position);
