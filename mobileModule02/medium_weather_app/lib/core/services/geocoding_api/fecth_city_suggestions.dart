@@ -77,7 +77,7 @@ Future<GeocodingResponse?> fetchCitySuggestions(String query) async {
       'https://geocoding-api.open-meteo.com/v1/search?name=$query&count=5&language=en&format=json';
   final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || response.statusCode == 404) {
     final data = json.decode(response.body);
     if (data == null) return null;
     return GeocodingResponse.fromJson(data);
