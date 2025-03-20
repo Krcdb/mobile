@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
 import 'package:medium_weather_app/presentation/screens/currently_screen.dart';
@@ -53,6 +55,7 @@ class HomeScreenState extends State<HomeScreen>
 
       final geocodingResponse = await fetchCitySuggestions(
         address,
+        context
       );
 
       if (geocodingResponse != null && geocodingResponse.results.isNotEmpty) {
@@ -63,8 +66,6 @@ class HomeScreenState extends State<HomeScreen>
         setState(() {
           _cityToSearch = firstCity;
         });
-      } else {
-        logger.w("No cities found for the given query.");
       }
     }
   }

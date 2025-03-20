@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:medium_weather_app/presentation/popup/show_error_dialogue.dart';
 
 class WeatherSearchBar extends StatefulWidget {
   final Function(City) onCitySelected;
@@ -31,7 +34,7 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
 
     setState(() => _isLoading = true);
 
-    final geocodingResponse = await fetchCitySuggestions(query);
+    final geocodingResponse = await fetchCitySuggestions(query, context);
 
     if (geocodingResponse != null) {
       setState(() {
@@ -50,16 +53,16 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
   }
 
   void _showOverlay() {
-    _removeOverlay(); // Remove previous overlay if any
+    _removeOverlay();
 
     final overlay = Overlay.of(context);
     _overlayEntry = OverlayEntry(
       builder:
           (context) => Positioned(
-            width: MediaQuery.of(context).size.width * 0.9, // Adjust width
+            width: MediaQuery.of(context).size.width * 0.9,
             child: CompositedTransformFollower(
               link: _layerLink,
-              offset: const Offset(0, 40), // Position it below TextField
+              offset: const Offset(0, 40),
               child: Material(
                 elevation: 4,
                 color: Colors.white,
@@ -103,19 +106,19 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
 
     setState(() => _isLoading = true);
 
-    final geocodingResponse = await fetchCitySuggestions(query);
+    final geocodingResponse = await fetchCitySuggestions(query, context);
 
-    if (geocodingResponse != null) {
-      setState(() {
-        _isLoading = false;
-      });
-
+    if (geocodingResponse != null && geocodingResponse.results.isNotEmpty) {
       widget.onCitySelected(geocodingResponse.results.first);
       _searchController.clear();
       _removeOverlay();
-    } else {
-      //print popup
+    } else if (geocodingResponse != null && geocodingResponse.results.isEmpty) {
+      showErrorDialog(context, message: "Could not find any result for the supplied address.");
+      _removeOverlay();
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override

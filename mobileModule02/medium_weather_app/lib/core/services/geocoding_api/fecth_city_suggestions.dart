@@ -1,5 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:medium_weather_app/presentation/popup/show_error_dialogue.dart';
 import 'dart:convert';
+
+import 'package:medium_weather_app/presentation/screens/home_screen.dart';
 
 class GeocodingResponse {
   final List<City> results;
@@ -70,19 +76,25 @@ class City {
   }
 }
 
-Future<GeocodingResponse?> fetchCitySuggestions(String query) async {
+Future<GeocodingResponse?> fetchCitySuggestions(String query, BuildContext context) async {
   if (query.isEmpty) return null;
 
   final url =
       'https://geocoding-api.open-meteo.com/v1/search?name=$query&count=5&language=en&format=json';
-  final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200 || response.statusCode == 404) {
-    final data = json.decode(response.body);
-    if (data == null) return null;
-    return GeocodingResponse.fromJson(data);
+  try {
+    final response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return GeocodingResponse.fromJson(data);
+    } else {
+      logger.e("Server error");
+      showErrorDialog(context, message: "Server error. Please try again later.");
+    }
+  } catch (e) {
+    logger.e("Connection issue");
+    showErrorDialog(context, message: "Connection issue. Please check your network.");
   }
+
   return null;
 }
-
-
