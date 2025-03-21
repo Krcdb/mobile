@@ -27,6 +27,8 @@ class HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   City? _cityToSearch;
+  bool _isConnectionOk = true;
+  bool _isCityFound = true;
 
   @override
   void initState() {
@@ -40,8 +42,25 @@ class HomeScreenState extends State<HomeScreen>
     });
   }
 
-  void _updateCity(City city) {
+  void _setIsConnectionOk(bool isConnectionOk) {
     setState(() {
+      _isConnectionOk = isConnectionOk;
+    });
+  }
+
+  void _setIsCityFound(bool isCityFound) {
+    setState(() {
+      _isCityFound = isCityFound;
+    });
+  }
+
+  void _updateCity(City? city) {
+    setState(() {
+      if (city == null) {
+        _cityToSearch = null;
+
+        return;
+      }
       logger.i("Updating city: ${city.name}, ${city.country}");
       _cityToSearch = city;
     });
@@ -53,14 +72,10 @@ class HomeScreenState extends State<HomeScreen>
     if (position != null) {
       final address = await getAddressFromCoordinates(position);
 
-      final geocodingResponse = await fetchCitySuggestions(
-        address,
-        context
-      );
+      final geocodingResponse = await fetchCitySuggestions(address, context);
 
       if (geocodingResponse != null && geocodingResponse.results.isNotEmpty) {
-        final firstCity =
-            geocodingResponse.results.first;
+        final firstCity = geocodingResponse.results.first;
         logger.i("Selected city: ${firstCity.name}, ${firstCity.country}");
 
         setState(() {
@@ -75,14 +90,31 @@ class HomeScreenState extends State<HomeScreen>
     return Scaffold(
       appBar: AppBar(
         //insert the weather search bar here
-        title: WeatherSearchBar(onCitySelected: _updateCity, onUseGeolocation: _useGeolocation),
+        title: WeatherSearchBar(
+          onCitySelected: _updateCity,
+          onUseGeolocation: _useGeolocation,
+          setIsConnectionOk: _setIsConnectionOk,
+          setIsCityFound: _setIsCityFound,
+        ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          CurrentlyScreen(city: _cityToSearch),
-          TodayScreen(city: _cityToSearch),
-          WeeklyScreen(city: _cityToSearch),
+          CurrentlyScreen(
+            city: _cityToSearch,
+            isCityFound: _isCityFound,
+            isConnectionOk: _isConnectionOk,
+          ),
+          TodayScreen(
+            city: _cityToSearch,
+            isCityFound: _isCityFound,
+            isConnectionOk: _isConnectionOk,
+          ),
+          WeeklyScreen(
+            city: _cityToSearch,
+            isCityFound: _isCityFound,
+            isConnectionOk: _isConnectionOk,
+          ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(

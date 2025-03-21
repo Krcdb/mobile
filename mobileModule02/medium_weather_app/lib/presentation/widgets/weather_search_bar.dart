@@ -1,17 +1,18 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
-import 'package:medium_weather_app/presentation/popup/show_error_dialogue.dart';
 
 class WeatherSearchBar extends StatefulWidget {
   final Function(City) onCitySelected;
   final VoidCallback onUseGeolocation;
+  final Function(bool) setIsConnectionOk;
+  final Function(bool) setIsCityFound;
 
   const WeatherSearchBar({
     super.key,
     required this.onCitySelected,
     required this.onUseGeolocation,
+    required this.setIsConnectionOk,
+    required this.setIsCityFound,
   });
 
   @override
@@ -39,10 +40,18 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
     if (geocodingResponse != null) {
       setState(() {
         _suggestions = geocodingResponse.results;
+        widget.setIsConnectionOk(true);
+        widget.setIsCityFound(_suggestions.isNotEmpty);
         _isLoading = false;
       });
 
       _showOverlay();
+    } else {
+      widget.setIsConnectionOk(false);
+      setState(() {
+        _isLoading = false;
+      });
+      _removeOverlay();
     }
   }
 
@@ -113,7 +122,7 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
       _searchController.clear();
       _removeOverlay();
     } else if (geocodingResponse != null && geocodingResponse.results.isEmpty) {
-      showErrorDialog(context, message: "Could not find any result for the supplied address.");
+      widget.setIsCityFound(false);
       _removeOverlay();
     }
     setState(() {

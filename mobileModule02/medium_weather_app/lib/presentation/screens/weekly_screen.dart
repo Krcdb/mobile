@@ -6,7 +6,15 @@ import 'package:medium_weather_app/presentation/widgets/daily_weather_info_row.d
 
 class WeeklyScreen extends StatefulWidget {
   final City? city;
-  const WeeklyScreen({super.key, required this.city});
+  final bool isCityFound;
+  final bool isConnectionOk;
+
+  const WeeklyScreen({
+    super.key,
+    required this.city,
+    required this.isCityFound,
+    required this.isConnectionOk,
+  });
 
   @override
   WeeklyScreenState createState() => WeeklyScreenState();
@@ -16,6 +24,8 @@ class WeeklyScreenState extends State<WeeklyScreen> {
   City? _city;
   DailyWeatherResponse? _dailyWeatherData;
   final String _title = 'Weekly';
+  bool _isCityFound = true;
+  bool _isConnectionOk = true;
 
   @override
   void initState() {
@@ -26,6 +36,11 @@ class WeeklyScreenState extends State<WeeklyScreen> {
   @override
   void didUpdateWidget(covariant WeeklyScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    setState(() {
+      _isCityFound = widget.isCityFound;
+      _isConnectionOk = widget.isConnectionOk;
+    });
 
     if (oldWidget.city != widget.city) {
       setState(() {
@@ -52,6 +67,23 @@ class WeeklyScreenState extends State<WeeklyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isConnectionOk) {
+      return Center(
+        child: Text(
+          "The service connection is lost, please check your internet connection or try again later.",
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else if (!_isCityFound) {
+      return Center(
+        child: Text(
+          "Could not find any result for the supplied address or coordinates.",
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
     return _city == null || _dailyWeatherData == null
         ? Center(
           child: Text(
@@ -75,9 +107,7 @@ class WeeklyScreenState extends State<WeeklyScreen> {
                   children: List.generate(
                     _dailyWeatherData!.daily.length,
                     (index) => Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 16.0,
-                      ),
+                      padding: const EdgeInsets.only(bottom: 16.0),
                       child: DailyWeatherInfoRow(
                         date: _dailyWeatherData!.daily.time[index],
                         minTemperature:

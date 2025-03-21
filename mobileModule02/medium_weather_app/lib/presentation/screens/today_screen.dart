@@ -5,8 +5,15 @@ import 'package:medium_weather_app/presentation/widgets/today_weather_info_row.d
 
 class TodayScreen extends StatefulWidget {
   final City? city;
+  final bool isCityFound;
+  final bool isConnectionOk;
 
-  const TodayScreen({super.key, required this.city});
+  const TodayScreen({
+    super.key,
+    required this.city,
+    required this.isCityFound,
+    required this.isConnectionOk,
+  });
 
   @override
   TodayScreenState createState() => TodayScreenState();
@@ -16,6 +23,8 @@ class TodayScreenState extends State<TodayScreen> {
   City? _city;
   HourlyWeatherResponse? _hourlyWeatherData;
   final String _title = 'Today';
+  bool _isCityFound = true;
+  bool _isConnectionOk = true;
 
   @override
   void initState() {
@@ -26,6 +35,11 @@ class TodayScreenState extends State<TodayScreen> {
   @override
   void didUpdateWidget(covariant TodayScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    setState(() {
+      _isCityFound = widget.isCityFound;
+      _isConnectionOk = widget.isConnectionOk;
+    });
 
     if (oldWidget.city != widget.city) {
       setState(() {
@@ -52,6 +66,23 @@ class TodayScreenState extends State<TodayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isConnectionOk) {
+      return Center(
+        child: Text(
+          "The service connection is lost, please check your internet connection or try again later.",
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else if (!_isCityFound) {
+      return Center(
+        child: Text(
+          "Could not find any result for the supplied address or coordinates.",
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
     return _city == null || _hourlyWeatherData == null
         ? Center(
           child: Text(
@@ -75,10 +106,17 @@ class TodayScreenState extends State<TodayScreen> {
                   children: List.generate(
                     _hourlyWeatherData!.hourly.length,
                     (index) => TodayWeatherInfoRow(
-                      date: _hourlyWeatherData!.hourly.time[index].substring(11, 16),
-                      temperature: _hourlyWeatherData!.hourly.temperature[index].toString(),
+                      date: _hourlyWeatherData!.hourly.time[index].substring(
+                        11,
+                        16,
+                      ),
+                      temperature:
+                          _hourlyWeatherData!.hourly.temperature[index]
+                              .toString(),
                       tempUnit: _hourlyWeatherData!.hourlyUnits.temperature,
-                      windSpeed: _hourlyWeatherData!.hourly.windSpeed[index].toString(),
+                      windSpeed:
+                          _hourlyWeatherData!.hourly.windSpeed[index]
+                              .toString(),
                       windUnit: _hourlyWeatherData!.hourlyUnits.windSpeed,
                     ),
                   ),

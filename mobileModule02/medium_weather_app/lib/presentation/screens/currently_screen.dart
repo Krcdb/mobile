@@ -5,8 +5,10 @@ import 'package:medium_weather_app/core/utils/weather_code_mapper.dart';
 
 class CurrentlyScreen extends StatefulWidget {
   final City? city;
+  final bool isCityFound;
+  final bool isConnectionOk;
 
-  const CurrentlyScreen({super.key, required this.city});
+  const CurrentlyScreen({super.key, required this.city, required this.isCityFound, required this.isConnectionOk});
 
   @override
   CurrentlyScreenState createState() => CurrentlyScreenState();
@@ -16,6 +18,8 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
   City? _city;
   CurrentWeatherResponse? _currentWeatherData;
   final String _title = 'Currently';
+  bool _isCityFound = true;
+  bool _isConnectionOk = true;
 
   @override
   void initState() {
@@ -26,6 +30,11 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
   @override
   void didUpdateWidget(covariant CurrentlyScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+      setState(() {
+        _isConnectionOk = widget.isConnectionOk;
+        _isCityFound = widget.isCityFound;
+      });
 
     if (oldWidget.city != widget.city) {
       setState(() {
@@ -52,6 +61,23 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isConnectionOk) {
+      return Center(
+        child: Text(
+          "The service connection is lost, please check your internet connection or try again later.",
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else if (!_isCityFound) {
+      return Center(
+        child: Text(
+          "Could not find any result for the supplied address or coordinates.",
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ); 
+    }
     return _city == null || _currentWeatherData == null
         ? Center(
           child: Text(

@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:medium_weather_app/presentation/popup/show_error_dialogue.dart';
 import 'dart:convert';
 
 import 'package:medium_weather_app/presentation/screens/home_screen.dart';
 
 class GeocodingResponse {
   final List<City> results;
+  String? responseCode;
 
   GeocodingResponse({required this.results});
 
@@ -71,12 +71,16 @@ class City {
       admin4: json['admin4'],
       timezone: json['timezone'],
       population: json['population'],
-      postcodes: (json['postcodes'] as List?)?.map((e) => e.toString()).toList(),
+      postcodes:
+          (json['postcodes'] as List?)?.map((e) => e.toString()).toList(),
     );
   }
 }
 
-Future<GeocodingResponse?> fetchCitySuggestions(String query, BuildContext context) async {
+Future<GeocodingResponse?> fetchCitySuggestions(
+  String query,
+  BuildContext context,
+) async {
   if (query.isEmpty) return null;
 
   final url =
@@ -84,16 +88,13 @@ Future<GeocodingResponse?> fetchCitySuggestions(String query, BuildContext conte
 
   try {
     final response = await http.get(Uri.parse(url));
-  if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return GeocodingResponse.fromJson(data);
-    } else {
-      logger.e("Server error");
-      showErrorDialog(context, message: "Server error. Please try again later.");
-    }
+    logger.d("Response code: ${response.statusCode}");
+    final data = json.decode(response.body);
+    var geocodingResponse = GeocodingResponse.fromJson(data);
+    geocodingResponse.responseCode = response.statusCode.toString();
+    return geocodingResponse;
   } catch (e) {
-    logger.e("Connection issue");
-    showErrorDialog(context, message: "Connection issue. Please check your network.");
+    logger.e("Connection issue: $e");
   }
 
   return null;
