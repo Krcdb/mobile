@@ -1,7 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:advanced_weather_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:advanced_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:advanced_weather_app/services/geocoding_api/fecth_city_suggestions.dart';
 import 'package:advanced_weather_app/presentation/screens/currently_screen.dart';
 import 'package:advanced_weather_app/core/utils/geolocation.dart';
 import 'package:logger/logger.dart';
@@ -89,7 +90,9 @@ class HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
+        backgroundColor: AppColors.dark,
         //insert the weather search bar here
         title: WeatherSearchBar(
           onCitySelected: _updateCity,
@@ -98,28 +101,43 @@ class HomeScreenState extends State<HomeScreen>
           setIsCityFound: _setIsCityFound,
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Stack(
         children: [
-          CurrentlyScreen(
-            city: _cityToSearch,
-            isCityFound: _isCityFound,
-            isConnectionOk: _isConnectionOk,
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/iphone_app_bg.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
-          TodayScreen(
-            city: _cityToSearch,
-            isCityFound: _isCityFound,
-            isConnectionOk: _isConnectionOk,
-          ),
-          WeeklyScreen(
-            city: _cityToSearch,
-            isCityFound: _isCityFound,
-            isConnectionOk: _isConnectionOk,
+          TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _tabController,
+            children: [
+              CurrentlyScreen(
+                city: _cityToSearch,
+                isCityFound: _isCityFound,
+                isConnectionOk: _isConnectionOk,
+              ),
+              TodayScreen(
+                city: _cityToSearch,
+                isCityFound: _isCityFound,
+                isConnectionOk: _isConnectionOk,
+              ),
+              WeeklyScreen(
+                city: _cityToSearch,
+                isCityFound: _isCityFound,
+                isConnectionOk: _isConnectionOk,
+              ),
+            ],
           ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
+        color: AppColors.dark.withValues(red: 0, green: 0, blue: 0, alpha: 0.5),
         child: TabBar(
+          labelColor: AppColors.orange,
+          unselectedLabelColor: AppColors.grey,
+          indicatorColor: AppColors.orange,
           controller: _tabController,
           onTap: _onTabSelected,
           tabs: const [

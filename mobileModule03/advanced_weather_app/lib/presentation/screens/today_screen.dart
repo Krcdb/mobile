@@ -1,6 +1,8 @@
+import 'package:advanced_weather_app/presentation/widgets/city_display.dart';
+import 'package:advanced_weather_app/presentation/widgets/error_text_display.dart';
 import 'package:flutter/material.dart';
-import 'package:advanced_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
-import 'package:advanced_weather_app/core/services/geocoding_api/fetch_hourly_weather.dart';
+import 'package:advanced_weather_app/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:advanced_weather_app/services/geocoding_api/fetch_hourly_weather.dart';
 import 'package:advanced_weather_app/presentation/widgets/today_weather_info_row.dart';
 
 class TodayScreen extends StatefulWidget {
@@ -65,22 +67,8 @@ class TodayScreenState extends State<TodayScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isConnectionOk) {
-      return Center(
-        child: Text(
-          "The service connection is lost, please check your internet connection or try again later.",
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else if (!_isCityFound) {
-      return Center(
-        child: Text(
-          "Could not find any result for the supplied address or coordinates.",
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
-      );
+   if (!_isConnectionOk || !_isCityFound) {
+      return ErrorTextDisplay(isCityFound: _isCityFound, isConnectionOk: _isConnectionOk);
     }
     return _city == null || _hourlyWeatherData == null
         ? Center(
@@ -93,12 +81,7 @@ class TodayScreenState extends State<TodayScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(_city!.name, style: TextStyle(fontSize: 30)),
-            Text(
-              _city!.admin1 ?? "Region Unknown",
-              style: TextStyle(fontSize: 24),
-            ),
-            Text(_city!.country, style: TextStyle(fontSize: 24)),
+            CityDisplay(cityName: _city!.name, stateName: _city!.admin1 ?? "Region Unknown", countryName: _city!.country),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(

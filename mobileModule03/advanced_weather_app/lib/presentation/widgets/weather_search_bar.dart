@@ -1,5 +1,6 @@
+import 'package:advanced_weather_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:advanced_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:advanced_weather_app/services/geocoding_api/fecth_city_suggestions.dart';
 
 class WeatherSearchBar extends StatefulWidget {
   final Function(City) onCitySelected;
@@ -74,7 +75,7 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
               offset: const Offset(0, 40),
               child: Material(
                 elevation: 4,
-                color: Colors.white,
+                color: AppColors.dark,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children:
@@ -82,6 +83,7 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
                         return ListTile(
                           title: Text(
                             "${city.name}, ${city.admin1}, ${city.country}",
+                            style: TextStyle(color: AppColors.white),
                           ),
                           onTap: () => _onCityTapped(city),
                         );
@@ -135,11 +137,14 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: TextField(
+        cursorColor: AppColors.white,
+        style: TextStyle(color: AppColors.white),
         controller: _searchController,
         onSubmitted: _onSearchSubmit,
         onChanged: _onSearchChanged,
         decoration: InputDecoration(
           hintText: 'Search city...',
+          hintStyle: TextStyle(color: AppColors.white),
           border: InputBorder.none,
           suffixIcon:
               _isLoading
@@ -148,6 +153,7 @@ class WeatherSearchBarState extends State<WeatherSearchBar> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                   : IconButton(
+                    color: AppColors.white,
                     icon: Icon(Icons.my_location),
                     onPressed: widget.onUseGeolocation,
                   ),

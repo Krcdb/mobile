@@ -1,6 +1,10 @@
+import 'package:advanced_weather_app/core/theme/app_colors.dart';
+import 'package:advanced_weather_app/presentation/screens/home_screen.dart';
+import 'package:advanced_weather_app/presentation/widgets/city_display.dart';
+import 'package:advanced_weather_app/presentation/widgets/error_text_display.dart';
 import 'package:flutter/material.dart';
-import 'package:advanced_weather_app/core/services/geocoding_api/fectch_current_weather.dart';
-import 'package:advanced_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:advanced_weather_app/services/geocoding_api/fectch_current_weather.dart';
+import 'package:advanced_weather_app/services/geocoding_api/fecth_city_suggestions.dart';
 import 'package:advanced_weather_app/core/utils/weather_code_mapper.dart';
 
 class CurrentlyScreen extends StatefulWidget {
@@ -65,21 +69,11 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isConnectionOk) {
-      return Center(
-        child: Text(
-          "The service connection is lost, please check your internet connection or try again later.",
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else if (!_isCityFound) {
-      return Center(
-        child: Text(
-          "Could not find any result for the supplied address or coordinates.",
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
+    if (!_isConnectionOk || !_isCityFound) {
+      logger.d("_isConnectionOk: $_isConnectionOk, _isCityFound: $_isCityFound");
+      return ErrorTextDisplay(
+        isCityFound: _isCityFound,
+        isConnectionOk: _isConnectionOk,
       );
     }
     return _city == null || _currentWeatherData == null
@@ -89,37 +83,46 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )
-        : Column(
-          mainAxisAlignment: MainAxisAlignment.start, // Vertically center
-          crossAxisAlignment: CrossAxisAlignment.center, // Horizontally center
-          children: [
-            Text(_city!.name, style: TextStyle(fontSize: 30)),
-            Text(
-              _city!.admin1 ?? "Region Unknown",
-              style: TextStyle(fontSize: 24),
-            ),
-            Text(_city!.country, style: TextStyle(fontSize: 24)),
-            Icon(
-              WeatherCodeMapper.getWeatherCodeIcon(
-                _currentWeatherData!.current.weatherCode,
+        : Padding(
+          padding: EdgeInsets.only(top: 80, bottom: 350),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CityDisplay(
+                cityName: _city!.name,
+                stateName: _city!.admin1 ?? "Region Unknown",
+                countryName: _city!.country,
               ),
-              size: 50,
-            ),
-            Text(
-              WeatherCodeMapper.getWeatherCodeDescription(
-                _currentWeatherData!.current.weatherCode,
+              Text(
+                "${_currentWeatherData!.current.temperature}${_currentWeatherData!.units.temperature}",
+                style: TextStyle(fontSize: 60, color: AppColors.orange),
               ),
-              style: TextStyle(fontSize: 30),
-            ),
-            Text(
-              "Temperature: ${_currentWeatherData!.current.temperature}${_currentWeatherData!.units.temperature}",
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              "Wind: ${_currentWeatherData!.current.windSpeed}${_currentWeatherData!.units.windSpeed}",
-              style: TextStyle(fontSize: 20),
-            ),
-          ],
+              Text(
+                WeatherCodeMapper.getWeatherCodeDescription(
+                  _currentWeatherData!.current.weatherCode,
+                ),
+                style: TextStyle(fontSize: 30, color: AppColors.white),
+              ),
+              Icon(
+                color: AppColors.blue,
+                WeatherCodeMapper.getWeatherCodeIcon(
+                  _currentWeatherData!.current.weatherCode,
+                ),
+                size: 100,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.wind_power_sharp, color: AppColors.blue, size: 30),
+                  Text(
+                    "${_currentWeatherData!.current.windSpeed}${_currentWeatherData!.units.windSpeed}",
+                    style: TextStyle(fontSize: 20, color: AppColors.white),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
   }
 }

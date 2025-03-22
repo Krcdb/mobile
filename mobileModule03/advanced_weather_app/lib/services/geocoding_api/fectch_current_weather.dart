@@ -90,9 +90,9 @@ Future<CurrentWeatherResponse?> fetchCurrentWeatherData(
   final url =
       'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current=temperature_2m,weather_code,precipitation,wind_speed_10m&timezone=auto';
 
-  final response = await http.get(Uri.parse(url));
 
   try {
+      final response = await http.get(Uri.parse(url));
       final data = json.decode(response.body);
       if (data == null) {
         logger.d('No data found');

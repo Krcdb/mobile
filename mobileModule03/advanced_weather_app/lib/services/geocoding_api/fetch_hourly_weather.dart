@@ -89,9 +89,9 @@ Future<HourlyWeatherResponse?> fetchHourlyWeatherData(
   final url =
       'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,wind_speed_10m&timezone=auto&forecast_days=1';
   
-  final response = await http.get(Uri.parse(url));
 
   try {
+      final response = await http.get(Uri.parse(url));
       final data = json.decode(response.body);
       if (data == null) {
         logger.d('No data found');

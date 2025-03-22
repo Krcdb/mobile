@@ -93,9 +93,9 @@ Future<DailyWeatherResponse?> fetchDailyWeatherData(
   final url =
       'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto';
   
-  final response = await http.get(Uri.parse(url));
 
   try {
+      final response = await http.get(Uri.parse(url));
       final data = json.decode(response.body);
       if (data == null) {
         logger.d('No data found');
