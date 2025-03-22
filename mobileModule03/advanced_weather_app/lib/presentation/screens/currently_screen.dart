@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medium_weather_app/core/services/geocoding_api/fectch_current_weather.dart';
-import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
-import 'package:medium_weather_app/core/utils/weather_code_mapper.dart';
+import 'package:advanced_weather_app/core/services/geocoding_api/fectch_current_weather.dart';
+import 'package:advanced_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:advanced_weather_app/core/utils/weather_code_mapper.dart';
 
 class CurrentlyScreen extends StatefulWidget {
   final City? city;

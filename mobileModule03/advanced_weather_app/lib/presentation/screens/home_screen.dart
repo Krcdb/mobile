@@ -1,13 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
-import 'package:medium_weather_app/presentation/screens/currently_screen.dart';
-import 'package:medium_weather_app/core/utils/geolocation.dart';
+import 'package:advanced_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:advanced_weather_app/presentation/screens/currently_screen.dart';
+import 'package:advanced_weather_app/core/utils/geolocation.dart';
 import 'package:logger/logger.dart';
-import 'package:medium_weather_app/presentation/screens/today_screen.dart';
-import 'package:medium_weather_app/presentation/screens/weekly_screen.dart';
-import 'package:medium_weather_app/presentation/widgets/weather_search_bar.dart';
+import 'package:advanced_weather_app/presentation/screens/today_screen.dart';
+import 'package:advanced_weather_app/presentation/screens/weekly_screen.dart';
+import 'package:advanced_weather_app/presentation/widgets/weather_search_bar.dart';
 
 final logger = Logger(
   printer: PrettyPrinter(

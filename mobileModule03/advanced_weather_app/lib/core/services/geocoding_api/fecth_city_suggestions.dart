@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:medium_weather_app/presentation/screens/home_screen.dart';
+import 'package:advanced_weather_app/presentation/screens/home_screen.dart';
 
 class GeocodingResponse {
   final List<City> results;

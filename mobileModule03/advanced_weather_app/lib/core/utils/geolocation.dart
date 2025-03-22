@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/material.dart';
-import 'package:medium_weather_app/presentation/popup/geolocation_permission.dart';
+import 'package:advanced_weather_app/presentation/popup/geolocation_permission.dart';
 
 final logger = Logger(
   printer: PrettyPrinter(

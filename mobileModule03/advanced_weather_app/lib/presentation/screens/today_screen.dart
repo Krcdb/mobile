@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medium_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
-import 'package:medium_weather_app/core/services/geocoding_api/fetch_hourly_weather.dart';
-import 'package:medium_weather_app/presentation/widgets/today_weather_info_row.dart';
+import 'package:advanced_weather_app/core/services/geocoding_api/fecth_city_suggestions.dart';
+import 'package:advanced_weather_app/core/services/geocoding_api/fetch_hourly_weather.dart';
+import 'package:advanced_weather_app/presentation/widgets/today_weather_info_row.dart';
 
 class TodayScreen extends StatefulWidget {
   final City? city;
