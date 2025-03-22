@@ -100,6 +100,7 @@ class HomeScreenState extends State<HomeScreen>
       ),
       body: TabBarView(
         controller: _tabController,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           CurrentlyScreen(
             city: _cityToSearch,
