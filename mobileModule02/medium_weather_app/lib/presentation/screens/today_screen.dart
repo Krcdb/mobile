@@ -22,7 +22,6 @@ class TodayScreen extends StatefulWidget {
 class TodayScreenState extends State<TodayScreen> {
   City? _city;
   HourlyWeatherResponse? _hourlyWeatherData;
-  final String _title = 'Today';
   bool _isCityFound = true;
   bool _isConnectionOk = true;
 
@@ -86,7 +85,7 @@ class TodayScreenState extends State<TodayScreen> {
     return _city == null || _hourlyWeatherData == null
         ? Center(
           child: Text(
-            _title,
+            "",
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )

@@ -23,7 +23,6 @@ class WeeklyScreen extends StatefulWidget {
 class WeeklyScreenState extends State<WeeklyScreen> {
   City? _city;
   DailyWeatherResponse? _dailyWeatherData;
-  final String _title = 'Weekly';
   bool _isCityFound = true;
   bool _isConnectionOk = true;
 
@@ -87,7 +86,7 @@ class WeeklyScreenState extends State<WeeklyScreen> {
     return _city == null || _dailyWeatherData == null
         ? Center(
           child: Text(
-            _title,
+            "",
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )

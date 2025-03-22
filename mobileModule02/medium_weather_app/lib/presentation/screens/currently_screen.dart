@@ -8,7 +8,12 @@ class CurrentlyScreen extends StatefulWidget {
   final bool isCityFound;
   final bool isConnectionOk;
 
-  const CurrentlyScreen({super.key, required this.city, required this.isCityFound, required this.isConnectionOk});
+  const CurrentlyScreen({
+    super.key,
+    required this.city,
+    required this.isCityFound,
+    required this.isConnectionOk,
+  });
 
   @override
   CurrentlyScreenState createState() => CurrentlyScreenState();
@@ -17,7 +22,6 @@ class CurrentlyScreen extends StatefulWidget {
 class CurrentlyScreenState extends State<CurrentlyScreen> {
   City? _city;
   CurrentWeatherResponse? _currentWeatherData;
-  final String _title = 'Currently';
   bool _isCityFound = true;
   bool _isConnectionOk = true;
 
@@ -31,19 +35,19 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
   void didUpdateWidget(covariant CurrentlyScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-      setState(() {
-        _isConnectionOk = widget.isConnectionOk;
-        _isCityFound = widget.isCityFound;
-      });
+    setState(() {
+      _isConnectionOk = widget.isConnectionOk;
+      _isCityFound = widget.isCityFound;
+    });
 
     if (oldWidget.city != widget.city) {
       setState(() {
         _city = widget.city;
       });
+    }
 
-      if (_city != null) {
-        _fetchCurrentWeatherData(); // Call an async function separately
-      }
+    if (_city != null) {
+      _fetchCurrentWeatherData();
     }
   }
 
@@ -76,12 +80,12 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
-      ); 
+      );
     }
     return _city == null || _currentWeatherData == null
         ? Center(
           child: Text(
-            _title,
+            "",
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )
@@ -95,9 +99,16 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
               style: TextStyle(fontSize: 24),
             ),
             Text(_city!.country, style: TextStyle(fontSize: 24)),
-            Icon(WeatherCodeMapper.getWeatherCodeIcon(_currentWeatherData!.current.weatherCode), size: 50),
+            Icon(
+              WeatherCodeMapper.getWeatherCodeIcon(
+                _currentWeatherData!.current.weatherCode,
+              ),
+              size: 50,
+            ),
             Text(
-              WeatherCodeMapper.getWeatherCodeDescription(_currentWeatherData!.current.weatherCode),
+              WeatherCodeMapper.getWeatherCodeDescription(
+                _currentWeatherData!.current.weatherCode,
+              ),
               style: TextStyle(fontSize: 30),
             ),
             Text(
@@ -108,7 +119,6 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
               "Wind: ${_currentWeatherData!.current.windSpeed}${_currentWeatherData!.units.windSpeed}",
               style: TextStyle(fontSize: 20),
             ),
-            
           ],
         );
   }

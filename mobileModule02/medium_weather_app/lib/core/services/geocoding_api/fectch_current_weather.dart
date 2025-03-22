@@ -10,6 +10,7 @@ class CurrentWeatherResponse {
   final double elevation;
   final CurrentWeather current;
   final WeatherUnits units;
+  String? responseCode;
 
   CurrentWeatherResponse({
     required this.latitude,
@@ -81,19 +82,29 @@ class WeatherUnits {
   }
 }
 
-Future<CurrentWeatherResponse?> fetchCurrentWeatherData(double latitude, double longitude) async {
-  final url = 'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current=temperature_2m,weather_code,precipitation,wind_speed_10m&timezone=auto';
+Future<CurrentWeatherResponse?> fetchCurrentWeatherData(
+  double latitude,
+  double longitude,
+) async {
   
+  final url =
+      'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current=temperature_2m,weather_code,precipitation,wind_speed_10m&timezone=auto';
+
   final response = await http.get(Uri.parse(url));
-  
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    if (data == null) {
-      logger.d('No data found');
-      return null;
-    }
-    logger.d('Current weather data: $data');
-    return CurrentWeatherResponse.fromJson(data);
+
+  try {
+      final data = json.decode(response.body);
+      if (data == null) {
+        logger.d('No data found');
+        return null;
+      }
+      logger.d('Current weather data: $data');
+      var currentWeatherResponse = CurrentWeatherResponse.fromJson(data);
+      currentWeatherResponse.responseCode = response.statusCode.toString();
+      logger.d('Current weather response code: ${currentWeatherResponse.responseCode}');
+      return currentWeatherResponse;
+  } catch (e) {
+    logger.e('Error fetching current weather data: $e');
   }
   return null;
 }

@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:medium_weather_app/presentation/screens/home_screen.dart';
+
 class DailyWeatherResponse {
   final double latitude;
   final double longitude;
@@ -8,6 +10,7 @@ class DailyWeatherResponse {
   final double elevation;
   final DailyWeather daily;
   final DailyUnits dailyUnits;
+  String? responseCode;
 
   DailyWeatherResponse({
     required this.latitude,
@@ -86,13 +89,25 @@ Future<DailyWeatherResponse?> fetchDailyWeatherData(
   double latitude,
   double longitude,
 ) async {
+
   final url =
       'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto';
+  
   final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    return DailyWeatherResponse.fromJson(data);
+  try {
+      final data = json.decode(response.body);
+      if (data == null) {
+        logger.d('No data found');
+        return null;
+      }
+      logger.d('Daily weather data: $data');
+      var dailyWeatherResponse = DailyWeatherResponse.fromJson(data);
+      dailyWeatherResponse.responseCode = response.statusCode.toString();
+      logger.d('Daily weather response code: ${dailyWeatherResponse.responseCode}');
+      return dailyWeatherResponse;
+  } catch (e) {
+    logger.e('Error fetching daily weather data: $e');
   }
   return null;
 }

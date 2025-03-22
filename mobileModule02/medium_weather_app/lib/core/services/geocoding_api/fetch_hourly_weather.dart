@@ -1,11 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:medium_weather_app/presentation/screens/home_screen.dart';
+
 class HourlyWeatherResponse {
   final double latitude;
   final double longitude;
   final String timezone;
   final double elevation;
+  String? responseCode;
   
   final HourlyWeather hourly;
   final HourlyWeatherUnits hourlyUnits;
@@ -85,11 +88,22 @@ Future<HourlyWeatherResponse?> fetchHourlyWeatherData(
 ) async {
   final url =
       'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,wind_speed_10m&timezone=auto&forecast_days=1';
+  
   final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    final data = json.decode(response.body);
-    return HourlyWeatherResponse.fromJson(data);
+  try {
+      final data = json.decode(response.body);
+      if (data == null) {
+        logger.d('No data found');
+        return null;
+      }
+      logger.d('Hourly weather data: $data');
+      var hourlyWeatherResponse = HourlyWeatherResponse.fromJson(data);
+      hourlyWeatherResponse.responseCode = response.statusCode.toString();
+      logger.d('Hourly weather response code: ${hourlyWeatherResponse.responseCode}');
+      return hourlyWeatherResponse;
+  } catch (e) {
+    logger.e('Error fetching hourly weather data: $e');
   }
   return null;
 }

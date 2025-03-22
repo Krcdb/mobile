@@ -97,26 +97,36 @@ class HomeScreenState extends State<HomeScreen>
           setIsCityFound: _setIsCityFound,
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          CurrentlyScreen(
-            city: _cityToSearch,
-            isCityFound: _isCityFound,
-            isConnectionOk: _isConnectionOk,
+      body: Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            'assets/background.jpg',
+            fit: BoxFit.cover,
           ),
-          TodayScreen(
-            city: _cityToSearch,
-            isCityFound: _isCityFound,
-            isConnectionOk: _isConnectionOk,
-          ),
-          WeeklyScreen(
-            city: _cityToSearch,
-            isCityFound: _isCityFound,
-            isConnectionOk: _isConnectionOk,
-          ),
-        ],
-      ),
+        ),
+        TabBarView(
+          controller: _tabController,
+          children: [
+            CurrentlyScreen(
+              city: _cityToSearch,
+              isCityFound: _isCityFound,
+              isConnectionOk: _isConnectionOk,
+            ),
+            TodayScreen(
+              city: _cityToSearch,
+              isCityFound: _isCityFound,
+              isConnectionOk: _isConnectionOk,
+            ),
+            WeeklyScreen(
+              city: _cityToSearch,
+              isCityFound: _isCityFound,
+              isConnectionOk: _isConnectionOk,
+            ),
+          ],
+        ),
+      ],
+    ),
       bottomNavigationBar: BottomAppBar(
         child: TabBar(
           controller: _tabController,
