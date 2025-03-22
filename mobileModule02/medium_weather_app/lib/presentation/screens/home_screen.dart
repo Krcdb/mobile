@@ -68,6 +68,7 @@ class HomeScreenState extends State<HomeScreen>
 
   void _useGeolocation() async {
     final position = await getCurrentLocation(context);
+    logger.d("use geolocation");
 
     if (position != null) {
       final address = await getAddressFromCoordinates(position);
@@ -97,36 +98,26 @@ class HomeScreenState extends State<HomeScreen>
           setIsCityFound: _setIsCityFound,
         ),
       ),
-      body: Stack(
-      children: [
-        Positioned.fill(
-          child: Image.asset(
-            'assets/background.jpg',
-            fit: BoxFit.cover,
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          CurrentlyScreen(
+            city: _cityToSearch,
+            isCityFound: _isCityFound,
+            isConnectionOk: _isConnectionOk,
           ),
-        ),
-        TabBarView(
-          controller: _tabController,
-          children: [
-            CurrentlyScreen(
-              city: _cityToSearch,
-              isCityFound: _isCityFound,
-              isConnectionOk: _isConnectionOk,
-            ),
-            TodayScreen(
-              city: _cityToSearch,
-              isCityFound: _isCityFound,
-              isConnectionOk: _isConnectionOk,
-            ),
-            WeeklyScreen(
-              city: _cityToSearch,
-              isCityFound: _isCityFound,
-              isConnectionOk: _isConnectionOk,
-            ),
-          ],
-        ),
-      ],
-    ),
+          TodayScreen(
+            city: _cityToSearch,
+            isCityFound: _isCityFound,
+            isConnectionOk: _isConnectionOk,
+          ),
+          WeeklyScreen(
+            city: _cityToSearch,
+            isCityFound: _isCityFound,
+            isConnectionOk: _isConnectionOk,
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomAppBar(
         child: TabBar(
           controller: _tabController,
