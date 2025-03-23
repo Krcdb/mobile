@@ -1,10 +1,10 @@
 import 'package:advanced_weather_app/presentation/widgets/city_display.dart';
+import 'package:advanced_weather_app/presentation/widgets/daily_creen_widget/daily_weather_chart.dart';
+import 'package:advanced_weather_app/presentation/widgets/daily_creen_widget/daily_weather_info_scroll_view.dart';
 import 'package:advanced_weather_app/presentation/widgets/error_text_display.dart';
 import 'package:flutter/material.dart';
 import 'package:advanced_weather_app/services/geocoding_api/fecth_city_suggestions.dart';
 import 'package:advanced_weather_app/services/geocoding_api/fetch_daily_weather.dart';
-import 'package:advanced_weather_app/core/utils/weather_code_mapper.dart';
-import 'package:advanced_weather_app/presentation/widgets/daily_weather_info_row.dart';
 
 class WeeklyScreen extends StatefulWidget {
   final City? city;
@@ -82,6 +82,7 @@ class WeeklyScreenState extends State<WeeklyScreen> {
           ),
         )
         : Column(
+          spacing: 10,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -90,35 +91,8 @@ class WeeklyScreenState extends State<WeeklyScreen> {
               stateName: _city!.admin1 ?? "Region Unknown",
               countryName: _city!.country,
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: List.generate(
-                    _dailyWeatherData!.daily.length,
-                    (index) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: DailyWeatherInfoRow(
-                        date: _dailyWeatherData!.daily.time[index],
-                        minTemperature:
-                            _dailyWeatherData!.daily.temperatureMin[index]
-                                .toString(),
-                        minTempUnit:
-                            _dailyWeatherData!.dailyUnits.temperatureMin,
-                        maxTemperature:
-                            _dailyWeatherData!.daily.temperatureMax[index]
-                                .toString(),
-                        maxTempUnit:
-                            _dailyWeatherData!.dailyUnits.temperatureMax,
-                        weatherDescription:
-                            WeatherCodeMapper.getWeatherCodeDescription(
-                              _dailyWeatherData!.daily.weatherCode[index],
-                            ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            DailyWeatherChart(dailyWeatherData: _dailyWeatherData!),
+            DailyWeatherInfoScrollView(dailyWeatherData: _dailyWeatherData!)
           ],
         );
   }

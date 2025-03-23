@@ -38,11 +38,13 @@ class HourlyWeatherUnits {
   final String time;
   final String temperature;
   final String windSpeed;
+  final String weatherCode;
 
   HourlyWeatherUnits({
     required this.time,
     required this.temperature,
     required this.windSpeed,
+    required this.weatherCode,
   });
 
   factory HourlyWeatherUnits.fromJson(Map<String, dynamic> json) {
@@ -50,6 +52,7 @@ class HourlyWeatherUnits {
       time: json['time'],
       temperature: json['temperature_2m'],
       windSpeed: json['wind_speed_10m'],
+      weatherCode: json['weather_code'],
     );
   }
 }
@@ -58,11 +61,13 @@ class HourlyWeather {
   final List<String> time;
   final List<double> temperature;
   final List<double> windSpeed;
+  final List<int> weatherCode;
 
   HourlyWeather({
     required this.time,
     required this.temperature,
     required this.windSpeed,
+    required this.weatherCode,
   });
 
   factory HourlyWeather.fromJson(Map<String, dynamic> json) {
@@ -76,6 +81,10 @@ class HourlyWeather {
           (json['wind_speed_10m'] as List)
               .map((e) => e != null ? (e as num).toDouble() : 0.0)
               .toList(),
+      weatherCode:
+          (json['weather_code'] as List)
+              .map((e) => e != null ? (e as int) : 0)
+              .toList(),
     );
   }
 
@@ -87,7 +96,7 @@ Future<HourlyWeatherResponse?> fetchHourlyWeatherData(
   double longitude,
 ) async {
   final url =
-      'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,wind_speed_10m&timezone=auto&forecast_days=1';
+      'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,weather_code,wind_speed_10m&timezone=auto&forecast_days=1';
   
 
   try {
