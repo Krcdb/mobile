@@ -70,7 +70,9 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_isConnectionOk || !_isCityFound) {
-      logger.d("_isConnectionOk: $_isConnectionOk, _isCityFound: $_isCityFound");
+      logger.d(
+        "_isConnectionOk: $_isConnectionOk, _isCityFound: $_isCityFound",
+      );
       return ErrorTextDisplay(
         isCityFound: _isCityFound,
         isConnectionOk: _isConnectionOk,
@@ -83,46 +85,50 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )
-        : Padding(
-          padding: EdgeInsets.only(top: 80, bottom: 350),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CityDisplay(
-                cityName: _city!.name,
-                stateName: _city!.admin1 ?? "Region Unknown",
-                countryName: _city!.country,
-              ),
-              Text(
-                "${_currentWeatherData!.current.temperature}${_currentWeatherData!.units.temperature}",
-                style: TextStyle(fontSize: 60, color: AppColors.orange),
-              ),
-              Text(
-                WeatherCodeMapper.getWeatherCodeDescription(
-                  _currentWeatherData!.current.weatherCode,
+        : SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 50, bottom: 50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CityDisplay(
+                  cityName: _city!.name,
+                  stateName: _city!.admin1 ?? "Region Unknown",
+                  countryName: _city!.country,
                 ),
-                style: TextStyle(fontSize: 30, color: AppColors.white),
-              ),
-              Icon(
-                color: AppColors.blue,
-                WeatherCodeMapper.getWeatherCodeIcon(
-                  _currentWeatherData!.current.weatherCode,
+                Text(
+                  "${_currentWeatherData!.current.temperature}${_currentWeatherData!.units.temperature}",
+                  style: TextStyle(fontSize: 60, color: AppColors.orange),
                 ),
-                size: 100,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.wind_power_sharp, color: AppColors.blue, size: 30),
-                  Text(
-                    "${_currentWeatherData!.current.windSpeed}${_currentWeatherData!.units.windSpeed}",
-                    style: TextStyle(fontSize: 20, color: AppColors.white),
+                Text(
+                  WeatherCodeMapper.getWeatherCodeDescription(
+                    _currentWeatherData!.current.weatherCode,
                   ),
-                ],
-              ),
-            ],
-          ),
-        );
+                  style: TextStyle(fontSize: 30, color: AppColors.white),
+                ),
+                Icon(
+                  color: AppColors.blue,
+                  WeatherCodeMapper.getWeatherCodeIcon(
+                    _currentWeatherData!.current.weatherCode,
+                  ),
+                  size: 100,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.wind_power_sharp,
+                      color: AppColors.blue,
+                      size: 30,
+                    ),
+                    Text(
+                      "${_currentWeatherData!.current.windSpeed}${_currentWeatherData!.units.windSpeed}",
+                      style: TextStyle(fontSize: 20, color: AppColors.white),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
   }
 }

@@ -109,26 +109,28 @@ class HomeScreenState extends State<HomeScreen>
               fit: BoxFit.cover,
             ),
           ),
-          TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _tabController,
-            children: [
-              CurrentlyScreen(
-                city: _cityToSearch,
-                isCityFound: _isCityFound,
-                isConnectionOk: _isConnectionOk,
-              ),
-              TodayScreen(
-                city: _cityToSearch,
-                isCityFound: _isCityFound,
-                isConnectionOk: _isConnectionOk,
-              ),
-              WeeklyScreen(
-                city: _cityToSearch,
-                isCityFound: _isCityFound,
-                isConnectionOk: _isConnectionOk,
-              ),
-            ],
+          SafeArea(
+            child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _tabController,
+              children: [
+                CurrentlyScreen(
+                  city: _cityToSearch,
+                  isCityFound: _isCityFound,
+                  isConnectionOk: _isConnectionOk,
+                ),
+                TodayScreen(
+                  city: _cityToSearch,
+                  isCityFound: _isCityFound,
+                  isConnectionOk: _isConnectionOk,
+                ),
+                WeeklyScreen(
+                  city: _cityToSearch,
+                  isCityFound: _isCityFound,
+                  isConnectionOk: _isConnectionOk,
+                ),
+              ],
+            ),
           ),
         ],
       ),

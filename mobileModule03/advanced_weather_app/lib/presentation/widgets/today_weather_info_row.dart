@@ -1,3 +1,4 @@
+import 'package:advanced_weather_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class TodayWeatherInfoRow extends StatelessWidget {
@@ -25,21 +26,21 @@ class TodayWeatherInfoRow extends StatelessWidget {
           child: Text(
             date,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.white),
           ),
         ),
         Expanded(
           child: Text(
             '$temperature$tempUnit',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16, color: AppColors.white),
           ),
         ),
         Expanded(
           child: Text(
             '$windSpeed$windUnit',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16, color: AppColors.white),
           ),
         ),
       ],
