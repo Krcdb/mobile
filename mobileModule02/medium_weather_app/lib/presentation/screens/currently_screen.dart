@@ -89,9 +89,10 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         )
-        : Column(
-          mainAxisAlignment: MainAxisAlignment.start, // Vertically center
-          crossAxisAlignment: CrossAxisAlignment.center, // Horizontally center
+        : SingleChildScrollView(
+          child:  Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(_city!.name, style: TextStyle(fontSize: 30)),
             Text(
@@ -120,6 +121,7 @@ class CurrentlyScreenState extends State<CurrentlyScreen> {
               style: TextStyle(fontSize: 20),
             ),
           ],
-        );
+        ));
+        
   }
 }
