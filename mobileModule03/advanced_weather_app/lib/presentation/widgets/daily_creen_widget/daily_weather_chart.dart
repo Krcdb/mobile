@@ -11,20 +11,25 @@ class DailyWeatherChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double minTemp = dailyWeatherData.daily.temperatureMin
+        .map((e) => e)
+        .reduce((a, b) => a < b ? a : b);
+    double maxTemp = dailyWeatherData.daily.temperatureMax
+        .map((e) => e)
+        .reduce((a, b) => a > b ? a : b);
+
     return Center(
-      // Centers the entire widget
       child: Container(
-        padding: const EdgeInsets.all(16), // Padding inside the background
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppColors.dark.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(12), // Rounded corners
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Title of the Chart
             Text(
-              "Week Temperatures", // Change this title as needed
+              "Weekly Temperatures",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -35,6 +40,8 @@ class DailyWeatherChart extends StatelessWidget {
               aspectRatio: 1.5,
               child: LineChart(
                 LineChartData(
+                  minY: minTemp - 2,
+                  maxY: maxTemp + 2,
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: true,
@@ -72,24 +79,22 @@ class DailyWeatherChart extends StatelessWidget {
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
+                        interval: 1,
                         showTitles: true,
                         reservedSize: 32,
                         getTitlesWidget: (value, meta) {
                           int index = value.toInt();
                           if (index >= 0 &&
-                              index < dailyWeatherData.daily.length) {
-                            String formattedDate = formatDate(
-                              dailyWeatherData.daily.time[index],
-                            );
+                              index < dailyWeatherData.daily.time.length) {
                             return Text(
-                              formattedDate,
+                              formatDate(dailyWeatherData.daily.time[index]),
                               style: TextStyle(
                                 color: AppColors.white,
                                 fontSize: 10,
                               ),
                             );
                           }
-                          return const Text('');
+                          return const SizedBox.shrink();
                         },
                       ),
                     ),
@@ -103,17 +108,14 @@ class DailyWeatherChart extends StatelessWidget {
                   ),
                   lineBarsData: [
                     LineChartBarData(
-                      spots:
-                          dailyWeatherData.daily.temperatureMax
-                              .asMap()
-                              .entries
-                              .map(
-                                (entry) => FlSpot(
-                                  entry.key.toDouble(),
-                                  entry.value.toDouble(),
-                                ),
-                              )
-                              .toList(),
+                      spots: List.generate(
+                        dailyWeatherData.daily.time.length,
+                        (index) => FlSpot(
+                          index.toDouble(),
+                          dailyWeatherData.daily.temperatureMax[index]
+                              .toDouble(),
+                        ),
+                      ),
                       isCurved: true,
                       color: AppColors.lightRed,
                       barWidth: 3,
@@ -131,17 +133,14 @@ class DailyWeatherChart extends StatelessWidget {
                       ),
                     ),
                     LineChartBarData(
-                      spots:
-                          dailyWeatherData.daily.temperatureMin
-                              .asMap()
-                              .entries
-                              .map(
-                                (entry) => FlSpot(
-                                  entry.key.toDouble(),
-                                  entry.value.toDouble(),
-                                ),
-                              )
-                              .toList(),
+                      spots: List.generate(
+                        dailyWeatherData.daily.time.length,
+                        (index) => FlSpot(
+                          index.toDouble(),
+                          dailyWeatherData.daily.temperatureMin[index]
+                              .toDouble(),
+                        ),
+                      ),
                       isCurved: true,
                       color: AppColors.blue,
                       barWidth: 3,
@@ -161,6 +160,31 @@ class DailyWeatherChart extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    Container(width: 10, height: 10, color: AppColors.blue),
+                    const SizedBox(width: 4),
+                    Text(
+                      "Min",
+                      style: TextStyle(color: AppColors.white, fontSize: 12),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Container(width: 10, height: 10, color: AppColors.lightRed),
+                    const SizedBox(width: 4),
+                    Text(
+                      "Max",
+                      style: TextStyle(color: AppColors.white, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

@@ -34,8 +34,8 @@ class WeatherCodeMapper {
 
   static const Map<int, IconData> _weatherIcons = {
     0: Icons.wb_sunny,
-    1: Icons.wb_cloudy,
-    2: Icons.wb_cloudy,
+    1: Icons.cloud_outlined,
+    2: Icons.cloud_outlined,
     3: Icons.cloud,
     45: Icons.foggy,
     48: Icons.foggy,
