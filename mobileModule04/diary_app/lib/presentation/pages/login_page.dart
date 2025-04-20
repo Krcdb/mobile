@@ -41,10 +41,33 @@ class LoginPage extends StatelessWidget {
     Navigator.pushReplacementNamed(context, '/diary');
   }
 
-  Future<void> _signInWithGitHub(BuildContext context) async {
-    final githubProvider = GithubAuthProvider();
-    await FirebaseAuth.instance.signInWithProvider(githubProvider);
-    Navigator.pushReplacementNamed(context, '/diary');
+
+
+  Future<void> _signInWithGitHub(context) async {
+    try {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final OAuthProvider githubProvider = OAuthProvider("github.com");
+
+      // Connexion sur mobile avec signInWithProvider()
+      final UserCredential userCredential =
+          await auth.signInWithProvider(githubProvider);
+
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        if (userCredential.additionalUserInfo!.isNewUser) {
+          //Logique si l'utilisateur est nouveau
+      } else {
+        //Logique si l'utilisateur n'est pas nouveau
+      }
+        logger.d("Connexion réussie avec GitHub !");
+        Navigator.pushReplacementNamed(context, '/diary');
+      } else {
+        logger.d("Erreur lors de la connexion");
+      }
+    } catch (e) {
+      logger.d("Une erreur est survenue lors de la connexion : $e");
+    }
   }
 
   @override
@@ -67,6 +90,12 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _signInWithGitHub(context),
               child: Text("Login with GitHub"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/');
+              },
+              child: Text("Retourner à l'accueil"),
             ),
           ],
         ),
