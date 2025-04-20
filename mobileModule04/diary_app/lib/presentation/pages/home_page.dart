@@ -6,25 +6,25 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   Future<void> _resetSession(BuildContext context) async {
-  await FirebaseAuth.instance.signOut();
-  await GoogleSignIn().signOut();
+    await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('Déconnexion réussie')),
-  );
-}
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Déconnexion réussie')));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home")),
+      appBar: AppBar(title: Text("Home"), automaticallyImplyLeading: false),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/login');
+                Navigator.pushReplacementNamed(context, '/login');
               },
               child: Text("Login"),
             ),

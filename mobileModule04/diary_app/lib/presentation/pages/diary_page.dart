@@ -19,12 +19,11 @@ class DiaryPage extends StatelessWidget {
             icon: Icon(Icons.logout),
             tooltip: 'Logout',
             onPressed: () => _logout(context),
-          )
+          ),
         ],
+        automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: Text("Welcome to your diary!"),
-      ),
+      body: Center(child: Text("Welcome to your diary!")),
     );
   }
 }
