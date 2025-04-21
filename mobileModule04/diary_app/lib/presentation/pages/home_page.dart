@@ -31,8 +31,8 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => _resetSession(context),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: Text("Reset Session"),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 212, 84, 75)),
+              child: Text("Reset Session", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

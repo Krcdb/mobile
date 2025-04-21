@@ -10,7 +10,6 @@ final logger = Logger(
   ),
 );
 
-
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -22,7 +21,8 @@ class LoginPage extends StatelessWidget {
       return;
     }
     logger.d("Google Sign-In successful: ${googleUser.email}");
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
     if (googleAuth.accessToken == null || googleAuth.idToken == null) {
       logger.d("Google Sign-In failed: No access token or ID token");
@@ -36,30 +36,29 @@ class LoginPage extends StatelessWidget {
 
     logger.d("Google Sign-In successful: ${googleUser.email}");
     await FirebaseAuth.instance.signInWithCredential(credential);
-    logger.d("Firebase Sign-In successful: ${FirebaseAuth.instance.currentUser?.email}");
-    
+    logger.d(
+      "Firebase Sign-In successful: ${FirebaseAuth.instance.currentUser?.email}",
+    );
+
     Navigator.pushReplacementNamed(context, '/diary');
   }
-
-
 
   Future<void> _signInWithGitHub(context) async {
     try {
       final FirebaseAuth auth = FirebaseAuth.instance;
       final OAuthProvider githubProvider = OAuthProvider("github.com");
 
-      // Connexion sur mobile avec signInWithProvider()
-      final UserCredential userCredential =
-          await auth.signInWithProvider(githubProvider);
+      final UserCredential userCredential = await auth.signInWithProvider(
+        githubProvider,
+      );
 
       final User? user = userCredential.user;
 
       if (user != null) {
         if (userCredential.additionalUserInfo!.isNewUser) {
-          //Logique si l'utilisateur est nouveau
-      } else {
-        //Logique si l'utilisateur n'est pas nouveau
-      }
+        } else {
+          //Logique si l'utilisateur n'est pas nouveau
+        }
         logger.d("Connexion réussie avec GitHub !");
         Navigator.pushReplacementNamed(context, '/diary');
       } else {
