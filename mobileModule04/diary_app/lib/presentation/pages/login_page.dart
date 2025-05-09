@@ -57,7 +57,7 @@ class LoginPage extends StatelessWidget {
       if (user != null) {
         if (userCredential.additionalUserInfo!.isNewUser) {
         } else {
-          //Logique si l'utilisateur n'est pas nouveau
+          
         }
         logger.d("Connexion réussie avec GitHub !");
         Navigator.pushReplacementNamed(context, '/diary');
